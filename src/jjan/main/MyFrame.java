@@ -76,10 +76,10 @@ public class MyFrame extends JFrame implements ActionListener{
 		panelTop.setPreferredSize(new Dimension(700,100));
 		
 		//패널에 라벨과 입력창 추가
-		panelTop.add(ptLabel);
-		panelTop.add(inputPt);
 		panelTop.add(nameLabel);
 		panelTop.add(inputName);
+		panelTop.add(ptLabel);
+		panelTop.add(inputPt);
 
 		//콤보박스 추가
 		panelTop.add(comTank);
@@ -113,8 +113,8 @@ public class MyFrame extends JFrame implements ActionListener{
 		if(command.equals("insert")) { //선수를 목록에 추가
 			//입력값 표에 추가
 			String info[]=new String[5];
-			info[0]=inputPt.getText();
-			info[1]=inputName.getText();
+			info[0]=inputName.getText();
+			info[1]=inputPt.getText();
 			info[2]=comTank.getSelectedItem().toString();
 			info[3]=comDps.getSelectedItem().toString();
 			info[4]=comHeal.getSelectedItem().toString();
