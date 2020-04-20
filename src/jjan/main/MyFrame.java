@@ -23,7 +23,7 @@ public class MyFrame extends JFrame implements ActionListener{
 	JTextField inputPt, inputName;
 	JComboBox<String> comTank,comDps,comHeal;
 	DefaultTableModel model;
-	JTable table;
+	JTable table, table2;
 	
 	//생성자
 	public MyFrame(String title) {//생성자의 인자로 프레임의 제목을 전달받아서
@@ -36,7 +36,7 @@ public class MyFrame extends JFrame implements ActionListener{
 	public void initUI() {
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		// x, y, width, height 를 한번에 지정하기 
-		setBounds(200, 200, 700, 700);
+		setBounds(200, 200, 1000, 700);
 		//보더 레이아웃으로 동작하게 하기 
 		setLayout(new BorderLayout());
 		//화면 중앙에 위치시키기
@@ -52,9 +52,12 @@ public class MyFrame extends JFrame implements ActionListener{
 		String dps[]= {"","히트스캔","투사체","올라운더"};
 		String heal[]= {"","메인힐","서브힐","올라운더"};		
 		
+		//기본모델, 테이블 생성
 		model=new DefaultTableModel(contents,header);
 		table=new JTable(model);
 		JScrollPane scpane=new JScrollPane(table);
+		table2=new JTable(model);
+		JScrollPane scpane2=new JScrollPane(table2);
 		
 		//라벨&입력창
 		JLabel ptLabel=new JLabel("점수");
@@ -73,6 +76,7 @@ public class MyFrame extends JFrame implements ActionListener{
 		//패널생성, UI 추가
 		JPanel panelTop=new JPanel();
 		
+		//패널 사이즈
 		panelTop.setPreferredSize(new Dimension(700,100));
 		
 		//패널에 라벨과 입력창 추가
@@ -81,7 +85,7 @@ public class MyFrame extends JFrame implements ActionListener{
 		panelTop.add(ptLabel);
 		panelTop.add(inputPt);
 
-		//콤보박스 추가
+		//패널에 콤보박스 추가
 		panelTop.add(comTank);
 		panelTop.add(comDps);
 		panelTop.add(comHeal);
@@ -91,7 +95,10 @@ public class MyFrame extends JFrame implements ActionListener{
 		
 		//패널을 프레임 상단에 배치
 		add(panelTop, BorderLayout.NORTH);
-		add(scpane, BorderLayout.CENTER);
+		
+		//JTable 배치
+		add(scpane, BorderLayout.EAST);
+		add(scpane2, BorderLayout.WEST);
 		
 		//버튼에 리스너
 		insertBtn.addActionListener(this);
@@ -118,16 +125,18 @@ public class MyFrame extends JFrame implements ActionListener{
 			info[2]=comTank.getSelectedItem().toString();
 			info[3]=comDps.getSelectedItem().toString();
 			info[4]=comHeal.getSelectedItem().toString();
-			model.addRow(info);
+			
+			model.addRow(info); //데이터를 모델에 추가
 			
 			inputPt.setText("");
-			inputName.setText("");
+			inputName.setText("");//입력창 초기화
+			
 		}else if(command.equals("delete")) { //선수 삭제
-			if(table.getSelectedRow() == -1) {
+			if(table.getSelectedRow() == -1) {// 선택한 셀이 없을 때
 				JOptionPane.showMessageDialog(this, "삭제할 셀을 선택해주세요!");
 				return;
 			}else {
-				model.removeRow(table.getSelectedRow());
+				model.removeRow(table.getSelectedRow()); //선택한 셀 모델에서 삭제
 			}
 		}
 	}
