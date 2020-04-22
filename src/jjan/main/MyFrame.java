@@ -2,9 +2,11 @@ package jjan.main;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -38,7 +40,7 @@ public class MyFrame extends JFrame implements ActionListener{
 		// x, y, width, height 를 한번에 지정하기 
 		setBounds(200, 200, 1000, 700);
 		//보더 레이아웃으로 동작하게 하기 
-		setLayout(new BorderLayout());
+		setLayout(new FlowLayout());
 		//화면 중앙에 위치시키기
 		setLocationRelativeTo(null);
 		
@@ -52,20 +54,32 @@ public class MyFrame extends JFrame implements ActionListener{
 		String dps[]= {"","히트스캔","투사체","올라운더"};
 		String heal[]= {"","메인힐","서브힐","올라운더"};		
 		
-		//기본모델, 테이블 생성
+		//기본모델, 테이블 생성 
 		model=new DefaultTableModel(contents,header);
 		model2=new DefaultTableModel(header,0);
 		model3=new DefaultTableModel(header,0);
+		
 		table=new JTable(model);
 		table2=new JTable(model2);
 		table3=new JTable(model3);
+		
+		//테이블을 스크롤 할 수 있도록 JScrollPane 사용
 		JScrollPane scpane=new JScrollPane(table);
+		//MaximumSize와 PrefferredSize 둘다 사용해야 테이블의 가로세로 크기가 제대로 조정된다.(?)
+		scpane.setMaximumSize(new Dimension(400,0));
+		scpane.setPreferredSize(new Dimension(400,119));
 		JScrollPane scpane2=new JScrollPane(table2);
+		scpane2.setMaximumSize(new Dimension(400,0));
+		scpane2.setPreferredSize(new Dimension(400,119));
 		JScrollPane scpane3=new JScrollPane(table3);
 		
 		//라벨&입력창
 		JLabel ptLabel=new JLabel("점수");
 		JLabel nameLabel=new JLabel("닉네임");
+		JLabel vsLabel=new JLabel("VS");
+		JLabel team1Label=new JLabel("1팀");
+		JLabel team2Label=new JLabel("2팀");
+		JLabel spectateLabel=new JLabel("관전자");
 		
 		inputPt=new JTextField(10);
 		inputName=new JTextField(10);
@@ -79,16 +93,22 @@ public class MyFrame extends JFrame implements ActionListener{
 		
 		//패널생성, UI 추가
 		JPanel panelTop=new JPanel();
+		JPanel panelVs=new JPanel();
+		JPanel panelTeam1=new JPanel();
+		JPanel panelTeam2=new JPanel();
+		JPanel panelSpec=new JPanel();
 		
 		//패널 사이즈
 		panelTop.setPreferredSize(new Dimension(700,100));
 		
-		//패널에 라벨과 입력창 추가
+		//패널에 라벨과 입력창 추가		
 		panelTop.add(nameLabel);
 		panelTop.add(inputName);
 		panelTop.add(ptLabel);
 		panelTop.add(inputPt);
-
+		
+		panelVs.add(vsLabel);
+		
 		//패널에 콤보박스 추가
 		panelTop.add(comTank);
 		panelTop.add(comDps);
@@ -97,13 +117,44 @@ public class MyFrame extends JFrame implements ActionListener{
 		panelTop.add(insertBtn);		
 		panelTop.add(deleteBtn);
 		
+		//Box 생성
+		Box team1Box=Box.createVerticalBox();
+		Box team2Box=Box.createVerticalBox();
+		Box VsBox=Box.createVerticalBox();
+		Box centerBox=Box.createHorizontalBox();
+		Box spectateBox=Box.createVerticalBox();
+		
+		//관전자 테이블 사이즈
+		spectateBox.setPreferredSize(new Dimension(500,250));
+		
+		//Box에 관전자 패널(라벨)과 테이블 추가
+		panelTeam1.add(team1Label);
+		team1Box.add(panelTeam1);
+		team1Box.add(scpane);
+		
+		panelTeam2.add(team2Label);
+		team2Box.add(panelTeam2);
+		team2Box.add(scpane2);
+		
+		panelSpec.add(spectateLabel);
+		spectateBox.add(panelSpec);
+		spectateBox.add(scpane3);
+		
+		VsBox.add(VsBox.createVerticalStrut(74));
+		VsBox.add(panelVs);
+		
+		//1팀, VS패널(라벨), 2팀 세개를 centerBox에 삽입
+		centerBox.add(team1Box);
+		centerBox.add(VsBox);
+		centerBox.add(team2Box);
+		
+		
 		//패널을 프레임 상단에 배치
 		add(panelTop, BorderLayout.NORTH);
 		
-		//JTable 배치
-		add(scpane, BorderLayout.WEST);
-		add(scpane2, BorderLayout.EAST);
-		add(scpane3, BorderLayout.SOUTH);
+		//Box 프레임에 배치
+		add(centerBox, BorderLayout.WEST);
+		add(spectateBox, BorderLayout.SOUTH);
 		
 		//버튼에 리스너
 		insertBtn.addActionListener(this);
