@@ -22,8 +22,8 @@ public class MyFrame extends JFrame implements ActionListener{
 	JTextArea tarea;
 	JTextField inputPt, inputName;
 	JComboBox<String> comTank,comDps,comHeal;
-	DefaultTableModel model;
-	JTable table, table2;
+	DefaultTableModel model,model2,model3;
+	JTable table, table2,table3;
 	
 	//생성자
 	public MyFrame(String title) {//생성자의 인자로 프레임의 제목을 전달받아서
@@ -54,10 +54,14 @@ public class MyFrame extends JFrame implements ActionListener{
 		
 		//기본모델, 테이블 생성
 		model=new DefaultTableModel(contents,header);
+		model2=new DefaultTableModel(header,0);
+		model3=new DefaultTableModel(header,0);
 		table=new JTable(model);
+		table2=new JTable(model2);
+		table3=new JTable(model3);
 		JScrollPane scpane=new JScrollPane(table);
-		table2=new JTable(model);
 		JScrollPane scpane2=new JScrollPane(table2);
+		JScrollPane scpane3=new JScrollPane(table3);
 		
 		//라벨&입력창
 		JLabel ptLabel=new JLabel("점수");
@@ -97,8 +101,9 @@ public class MyFrame extends JFrame implements ActionListener{
 		add(panelTop, BorderLayout.NORTH);
 		
 		//JTable 배치
-		add(scpane, BorderLayout.EAST);
-		add(scpane2, BorderLayout.WEST);
+		add(scpane, BorderLayout.WEST);
+		add(scpane2, BorderLayout.EAST);
+		add(scpane3, BorderLayout.SOUTH);
 		
 		//버튼에 리스너
 		insertBtn.addActionListener(this);
@@ -126,18 +131,33 @@ public class MyFrame extends JFrame implements ActionListener{
 			info[3]=comDps.getSelectedItem().toString();
 			info[4]=comHeal.getSelectedItem().toString();
 			
-			model.addRow(info); //데이터를 모델에 추가
+			if(model.getRowCount()<6) {
+				model.addRow(info); //데이터를 모델에 추가				
+			}else if(model2.getRowCount()<6){
+				model2.addRow(info);
+			}else {
+				model3.addRow(info);
+			}
 			
 			inputPt.setText("");
 			inputName.setText("");//입력창 초기화
 			
 		}else if(command.equals("delete")) { //선수 삭제
-			if(table.getSelectedRow() == -1) {// 선택한 셀이 없을 때
+			int selectedRow=table.getSelectedRow();
+			int selectedRow2=table2.getSelectedRow();
+			int selectedRow3=table3.getSelectedRow();
+			
+			if(selectedRow == -1 && selectedRow2 == -1
+					&& selectedRow3 == -1) {// 선택한 셀이 없을 때
 				JOptionPane.showMessageDialog(this, "삭제할 셀을 선택해주세요!");
 				return;
-			}else {
+			}else if(selectedRow != -1){
 				model.removeRow(table.getSelectedRow()); //선택한 셀 모델에서 삭제
-			}
+			}else if(selectedRow2 != -1){
+				model2.removeRow(table2.getSelectedRow()); //선택한 셀 모델에서 삭제
+			}else if(selectedRow3 != -1){
+				model3.removeRow(table3.getSelectedRow()); //선택한 셀 모델에서 삭제
+			} 
 		}
 	}
 }
