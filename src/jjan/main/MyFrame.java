@@ -234,11 +234,12 @@ public class MyFrame extends JFrame implements ActionListener{
 		}else if(command.equals("ptHi")) {
 			Vector<Object> team1=model.getDataVector();
 			System.out.println(team1);
+			model2.addRow((Vector)team1.get(0));
 		}
-		else if(command.equals("ptHi")) {
+		else if(command.equals("ptLow")) {
 			
 		}
-		else if(command.equals("ptHi")) {
+		else if(command.equals("pos")) {
 			
 		}//if(command.equals) end
 	}//actionPerformed end
