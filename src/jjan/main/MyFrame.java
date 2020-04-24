@@ -1,10 +1,10 @@
 package jjan.main;
 
-import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Vector;
 
 import javax.swing.Box;
 import javax.swing.JButton;
@@ -65,6 +65,8 @@ public class MyFrame extends JFrame implements ActionListener{
 		
 		//테이블을 스크롤 할 수 있도록 JScrollPane 사용
 		JScrollPane scpane=new JScrollPane(table);
+		
+		//테이블 크기 조정
 		//MaximumSize와 PrefferredSize 둘다 사용해야 테이블의 가로세로 크기가 제대로 조정된다.(?)
 		scpane.setMaximumSize(new Dimension(400,0));
 		scpane.setPreferredSize(new Dimension(400,119));
@@ -81,18 +83,25 @@ public class MyFrame extends JFrame implements ActionListener{
 		JLabel team2Label=new JLabel("2팀");
 		JLabel spectateLabel=new JLabel("관전자");
 		
+		//점수,닉네임 입력창
 		inputPt=new JTextField(10);
 		inputName=new JTextField(10);
 		
+		//콤보박스
 		comTank=new JComboBox(tank);
 		comDps=new JComboBox(dps);
 		comHeal=new JComboBox(heal);
 		
+		//버튼
 		JButton insertBtn=new JButton("추가");
 		JButton deleteBtn=new JButton("삭제");
+		JButton sortptHiBtn=new JButton("고점수 정렬");
+		JButton sortptLowBtn=new JButton("저점수 정렬");
+		JButton sortposBtn=new JButton("포지션 정렬");
 		
-		//패널생성, UI 추가
+		//패널생성
 		JPanel panelTop=new JPanel();
+		JPanel panelTop2=new JPanel();		
 		JPanel panelVs=new JPanel();
 		JPanel panelTeam1=new JPanel();
 		JPanel panelTeam2=new JPanel();
@@ -114,8 +123,13 @@ public class MyFrame extends JFrame implements ActionListener{
 		panelTop.add(comDps);
 		panelTop.add(comHeal);
 		
+		//패널에 버튼 추가
 		panelTop.add(insertBtn);		
 		panelTop.add(deleteBtn);
+		
+		panelTop2.add(sortposBtn);
+		panelTop2.add(sortptHiBtn);
+		panelTop2.add(sortptLowBtn);
 		
 		//Box 생성
 		Box team1Box=Box.createVerticalBox();
@@ -150,23 +164,31 @@ public class MyFrame extends JFrame implements ActionListener{
 		
 		
 		//패널을 프레임 상단에 배치
-		add(panelTop, BorderLayout.NORTH);
+		add(panelTop);
+		add(panelTop2);
 		
 		//Box 프레임에 배치
-		add(centerBox, BorderLayout.WEST);
-		add(spectateBox, BorderLayout.SOUTH);
+		add(centerBox);
+		add(spectateBox);
 		
 		//버튼에 리스너
 		insertBtn.addActionListener(this);
 		deleteBtn.addActionListener(this);
+		sortptHiBtn.addActionListener(this);
+		sortptLowBtn.addActionListener(this);
+		sortposBtn.addActionListener(this);
 		
 		//버튼 액션 커맨드 설정
 		insertBtn.setActionCommand("insert");
 		deleteBtn.setActionCommand("delete");
+		sortptHiBtn.setActionCommand("ptHi");
+		sortptLowBtn.setActionCommand("phLow");
+		sortposBtn.setActionCommand("pos");
 		
 		//화면에 보이게 하기
 		setVisible(true);
-	}
+		
+	}//initUI end
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -208,10 +230,19 @@ public class MyFrame extends JFrame implements ActionListener{
 				model2.removeRow(table2.getSelectedRow()); //선택한 셀 모델에서 삭제
 			}else if(selectedRow3 != -1){
 				model3.removeRow(table3.getSelectedRow()); //선택한 셀 모델에서 삭제
-			} 
+			}
+		}else if(command.equals("ptHi")) {
+			Vector<Object> team1=model.getDataVector();
+			System.out.println(team1);
 		}
-	}
-}
+		else if(command.equals("ptHi")) {
+			
+		}
+		else if(command.equals("ptHi")) {
+			
+		}//if(command.equals) end
+	}//actionPerformed end
+}//class MyFrame end
 
 
 
