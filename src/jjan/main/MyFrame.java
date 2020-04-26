@@ -235,6 +235,9 @@ public class MyFrame extends JFrame implements ActionListener{
 			Vector<Object> team1=model.getDataVector();
 			System.out.println(team1);
 			model2.addRow((Vector)team1.get(0));
+			System.out.println(model.getColumnName(0));
+			System.out.println(model.getValueAt(1, 1));
+			System.out.println(model.getDataVector());
 		}
 		else if(command.equals("ptLow")) {
 			
