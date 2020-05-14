@@ -1,5 +1,6 @@
 package jjan.main;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -26,6 +27,7 @@ public class MyFrame extends JFrame implements ActionListener{
 	JComboBox<String> comTank,comDps,comHeal;
 	DefaultTableModel model,model2,model3;
 	JTable table, table2,table3;
+	String[] header={"닉네임","점수","탱","딜","힐"};
 	
 	//생성자
 	public MyFrame(String title) {//생성자의 인자로 프레임의 제목을 전달받아서
@@ -45,10 +47,13 @@ public class MyFrame extends JFrame implements ActionListener{
 		setLocationRelativeTo(null);
 		
 		//표 만들기
-		String header[]= {"닉네임","점수","탱","딜","힐"};
 		String contents[][]= {
-				{"짱닭","3500","서브탱","서브딜","메인힐 서브힐"},
-				{"루시우","3100","메인탱","서브딜","서브힐"}
+				{"루시우","3100","메인탱","",""},
+				{"루시우3","2200","","","메인힐"},
+				{"희님","3900","","","서브힐"},
+				{"루시우2","2500","","서브딜",""},
+				{"짱닭","3500","서브탱","",""},
+				{"야돈","4000","","메인딜",""},
 		};
 		String tank[]= {"","메인탱","서브탱","올라운더"};
 		String dps[]= {"","히트스캔","투사체","올라운더"};
@@ -56,7 +61,8 @@ public class MyFrame extends JFrame implements ActionListener{
 		
 		//기본모델, 테이블 생성 
 		model=new DefaultTableModel(contents,header);
-		model2=new DefaultTableModel(header,0);
+//		model2=new DefaultTableModel(header,0);
+		model2=new DefaultTableModel(contents,header);
 		model3=new DefaultTableModel(header,0);
 		
 		table=new JTable(model);
@@ -65,7 +71,6 @@ public class MyFrame extends JFrame implements ActionListener{
 		
 		//테이블을 스크롤 할 수 있도록 JScrollPane 사용
 		JScrollPane scpane=new JScrollPane(table);
-		
 		//테이블 크기 조정
 		//MaximumSize와 PrefferredSize 둘다 사용해야 테이블의 가로세로 크기가 제대로 조정된다.(?)
 		scpane.setMaximumSize(new Dimension(400,0));
@@ -74,6 +79,11 @@ public class MyFrame extends JFrame implements ActionListener{
 		scpane2.setMaximumSize(new Dimension(400,0));
 		scpane2.setPreferredSize(new Dimension(400,119));
 		JScrollPane scpane3=new JScrollPane(table3);
+		
+		//표 배경이 흰색으로 표시되도록
+		scpane.getViewport().setBackground(Color.WHITE);
+		scpane2.getViewport().setBackground(Color.WHITE);
+		scpane3.getViewport().setBackground(Color.WHITE);
 		
 		//라벨&입력창
 		JLabel ptLabel=new JLabel("점수");
@@ -190,6 +200,8 @@ public class MyFrame extends JFrame implements ActionListener{
 		
 	}//initUI end
 	
+	
+	//버튼이 눌렸을 때
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		//눌러진 버튼의 command 문자열을 읽어와서 
@@ -204,9 +216,9 @@ public class MyFrame extends JFrame implements ActionListener{
 			info[3]=comDps.getSelectedItem().toString();
 			info[4]=comHeal.getSelectedItem().toString();
 			
-			if(model.getRowCount()<6) {
+			if(model.getRowCount() < 6) {
 				model.addRow(info); //데이터를 모델에 추가				
-			}else if(model2.getRowCount()<6){
+			}else if(model2.getRowCount() < 6){
 				model2.addRow(info);
 			}else {
 				model3.addRow(info);
@@ -231,21 +243,84 @@ public class MyFrame extends JFrame implements ActionListener{
 			}else if(selectedRow3 != -1){
 				model3.removeRow(table3.getSelectedRow()); //선택한 셀 모델에서 삭제
 			}
-		}else if(command.equals("ptHi")) {
-			Vector<Object> team1=model.getDataVector();
-			System.out.println(team1);
-			model2.addRow((Vector)team1.get(0));
-			System.out.println(model.getColumnName(0));
-			System.out.println(model.getValueAt(1, 1));
-			System.out.println(model.getDataVector());
-		}
-		else if(command.equals("ptLow")) {
+		}else if(command.equals("ptHi")) { //고점수 정렬
+			//점수 내림차순 
+			DefaultTableModel total=pointDesc();
 			
+			//양팀에 한명씩 분배
+			teamSelect(total);
 		}
-		else if(command.equals("pos")) {
+		else if(command.equals("ptLow")) { //저점수 정렬
+			//점수 오름차순 - 양팀에 한명씩 분배 - 팀별로 포지션 내림차순
+			
+
+		}
+		else if(command.equals("pos")) { //포지션 정렬
+			//메인,서브 최대한 양팀에 분배되도록. 없다면 올라운더로 배치
 			
 		}//if(command.equals) end
 	}//actionPerformed end
+	
+	//모든 인원을 점수 내림차순으로 정렬하는 메소드
+	public DefaultTableModel pointDesc() {
+		DefaultTableModel total=new DefaultTableModel(header,0); //모든인원의 정보를 담을 객체
+		
+		//모든 입력된 row를 total에 담는다
+		for(int i=0 ; i < model.getRowCount() ; i++) {
+			total.addRow((Vector)model.getDataVector().get(i));			
+			total.addRow((Vector)model2.getDataVector().get(i));			
+			if(model3.getRowCount()!=0) {
+				total.addRow((Vector)model3.getDataVector().get(i));							
+			}
+		}
+		
+		//버블정렬로 내림차순 정렬 수행
+		for(int i=0 ; i < total.getRowCount()-1 ; i++) {			
+			for(int j=i+1 ; j < total.getRowCount() ; j++) {
+				if(Integer.parseInt((String) total.getValueAt(i, 1)) < 
+						Integer.parseInt((String)total.getValueAt(j, 1))) {
+					
+					Object rdata,rdata2;
+					rdata=total.getDataVector().get(i);//현재줄
+					rdata2=total.getDataVector().get(j);//다음줄
+					
+					//swap
+					total.getDataVector().set(i, rdata2);
+					total.getDataVector().set(j, rdata);
+					
+					
+				}//if end
+			}//for end			
+		}//for end
+		
+		return total;
+		
+	}//pointDesc end
+	
+	public void teamSelect(DefaultTableModel total) {
+		//모델 모두 초기화
+		model.setNumRows(0);
+		model2.setNumRows(0);
+		model3.setNumRows(0);
+		
+		//total을 팀1,2 관전자에 분배
+		for(int i=0; i <= total.getRowCount()-1 ; i++) {
+			//현재 로우
+			Object rowdata=total.getDataVector().get(i);
+			
+			if(i%2!=0 && i<=11) {//홀수 줄은 팀2에 추가
+				model2.addRow((Vector)rowdata);
+			}else if(i>11){//12명 이상일때 관전자에 추가
+				model3.addRow((Vector)rowdata);
+			}else {//짝수 줄은 팀1에 추가
+				model.addRow((Vector)rowdata);
+			}//if end
+		}//for end
+	}//teamSelect() end
+	
+	
+	
+	
 }//class MyFrame end
 
 
