@@ -192,7 +192,7 @@ public class MyFrame extends JFrame implements ActionListener{
 		insertBtn.setActionCommand("insert");
 		deleteBtn.setActionCommand("delete");
 		sortptHiBtn.setActionCommand("ptHi");
-		sortptLowBtn.setActionCommand("phLow");
+		sortptLowBtn.setActionCommand("ptLow");
 		sortposBtn.setActionCommand("pos");
 		
 		//화면에 보이게 하기
@@ -251,12 +251,17 @@ public class MyFrame extends JFrame implements ActionListener{
 			teamSelect(total);
 		}
 		else if(command.equals("ptLow")) { //저점수 정렬
-			//점수 오름차순 - 양팀에 한명씩 분배 - 팀별로 포지션 내림차순
+			//점수 오름차순 
+			DefaultTableModel total=pointAsc();
 			
+			//양팀에 한명씩 분배
+			teamSelect(total);
 
 		}
 		else if(command.equals("pos")) { //포지션 정렬
 			//메인,서브 최대한 양팀에 분배되도록. 없다면 올라운더로 배치
+			
+			
 			
 		}//if(command.equals) end
 	}//actionPerformed end
@@ -269,7 +274,11 @@ public class MyFrame extends JFrame implements ActionListener{
 		for(int i=0 ; i < model.getRowCount() ; i++) {
 			total.addRow((Vector)model.getDataVector().get(i));			
 			total.addRow((Vector)model2.getDataVector().get(i));			
-			if(model3.getRowCount()!=0) {
+		}
+		
+		//관전자가 있을 때 total에 추가
+		if(model3.getRowCount()!=0) {
+			for(int i=0 ; i < model3.getRowCount() ; i++) {
 				total.addRow((Vector)model3.getDataVector().get(i));							
 			}
 		}
@@ -297,6 +306,47 @@ public class MyFrame extends JFrame implements ActionListener{
 		
 	}//pointDesc end
 	
+	//모든 인원을 점수 오름차순으로 정렬하는 메소드
+	public DefaultTableModel pointAsc() {
+		DefaultTableModel total=new DefaultTableModel(header,0); //모든인원의 정보를 담을 객체
+		
+		//모든 입력된 row를 total에 담는다
+		for(int i=0 ; i < model.getRowCount() ; i++) {
+			total.addRow((Vector)model.getDataVector().get(i));			
+			total.addRow((Vector)model2.getDataVector().get(i));			
+		}
+		
+		//관전자가 있을 때 total에 추가
+		if(model3.getRowCount()!=0) {
+			for(int i=0 ; i < model3.getRowCount() ; i++) {
+				total.addRow((Vector)model3.getDataVector().get(i));							
+			}
+		}
+		
+		//버블정렬로 오름차순 정렬 수행
+		for(int i=0 ; i < total.getRowCount()-1 ; i++) {			
+			for(int j=i+1 ; j < total.getRowCount() ; j++) {
+				if(Integer.parseInt((String) total.getValueAt(i, 1)) > 
+						Integer.parseInt((String)total.getValueAt(j, 1))) {
+					
+					Object rdata,rdata2;
+					rdata=total.getDataVector().get(i);//현재줄
+					rdata2=total.getDataVector().get(j);//다음줄
+					
+					//swap
+					total.getDataVector().set(i, rdata2);
+					total.getDataVector().set(j, rdata);
+					
+					
+				}//if end
+			}//for end			
+		}//for end
+		
+		return total;
+		
+	}//pointAsc end
+	
+	//팀별로 분배하는 메소드
 	public void teamSelect(DefaultTableModel total) {
 		//모델 모두 초기화
 		model.setNumRows(0);
@@ -316,6 +366,8 @@ public class MyFrame extends JFrame implements ActionListener{
 				model.addRow((Vector)rowdata);
 			}//if end
 		}//for end
+		
+//		total.setNumRows(0);//total 모델 초기화
 	}//teamSelect() end
 	
 	
