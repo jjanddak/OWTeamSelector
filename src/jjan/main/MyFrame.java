@@ -257,23 +257,28 @@ public class MyFrame extends JFrame implements ActionListener{
 			//점수 내림차순 
 			DefaultTableModel total=pointDesc();
 			
-			//양팀에 한명씩 분배
-			teamSelect(total);
+			if(!total.equals(null)) {//total이 null 아니면 메소드 실행
+				//양팀에 한명씩 분배
+				teamSelect(total);				
+			}
 		}
 		else if(command.equals("ptLow")) { //저점수 정렬
 			//점수 오름차순 
 			DefaultTableModel total=pointAsc();
 			
-			//양팀에 한명씩 분배
-			teamSelect(total);
-
+			if(!total.equals(null)) {//total이 null 아니면 메소드 실행
+				//양팀에 한명씩 분배
+				teamSelect(total);				
+			}
 		}
 		else if(command.equals("pos")) { //포지션 정렬
 			//내림차순으로 정렬
 			DefaultTableModel total=pointDesc();
 			
-			//포지션 별로 재정렬 (탱딜힐 순서)
-			total=posSelect(total);
+			if(!total.equals(null)) {//total이 null 아니면 메소드 실행			
+				//포지션 별로 재정렬 (탱딜힐 순서)
+				total=posSelect(total);
+			}
 			
 			//양팀에 분배
 			teamSelect(total);
@@ -286,14 +291,20 @@ public class MyFrame extends JFrame implements ActionListener{
 		if(model.getRowCount()<6 || model2.getRowCount()<6) {
 			JOptionPane.showMessageDialog(this, "최소한 12명의 선수 정보를 입력해주세요!",
 					"ERROR",JOptionPane.ERROR_MESSAGE);
+			return null;
 		}
 		
 		DefaultTableModel total=new DefaultTableModel(header,0); //모든인원의 정보를 담을 객체
 				
 		//모든 입력된 row를 total에 담는다
 		for(int i=0 ; i < model.getRowCount() ; i++) {
-			total.addRow((Vector)model.getDataVector().get(i));			
-			total.addRow((Vector)model2.getDataVector().get(i));			
+			try {
+				total.addRow((Vector)model.getDataVector().get(i));			
+				total.addRow((Vector)model2.getDataVector().get(i));			
+				
+			} catch (IndexOutOfBoundsException e) {
+				System.out.println(e);
+			}
 		}
 		
 		//관전자가 있을 때 total에 추가
@@ -332,14 +343,20 @@ public class MyFrame extends JFrame implements ActionListener{
 		if(model.getRowCount()<6 || model2.getRowCount()<6) {
 			JOptionPane.showMessageDialog(this, "최소한 12명의 선수 정보를 입력해주세요!",
 					"ERROR",JOptionPane.ERROR_MESSAGE);
+			return null;
 		}
 				
 		DefaultTableModel total=new DefaultTableModel(header,0); //모든인원의 정보를 담을 객체
 		
 		//모든 입력된 row를 total에 담는다
 		for(int i=0 ; i < model.getRowCount() ; i++) {
-			total.addRow((Vector)model.getDataVector().get(i));			
-			total.addRow((Vector)model2.getDataVector().get(i));			
+			try {
+				total.addRow((Vector)model.getDataVector().get(i));			
+				total.addRow((Vector)model2.getDataVector().get(i));			
+				
+			} catch (IndexOutOfBoundsException e) {
+				System.out.println(e);
+			}
 		}
 		
 		//관전자가 있을 때 total에 추가
@@ -385,10 +402,12 @@ public class MyFrame extends JFrame implements ActionListener{
 			for(int i=0 ; i <= total.getRowCount()-1 ; i++) {
 				if(total.getValueAt(i, 2).equals("메인탱") || total.getValueAt(i, 2).equals("올라운더")
 						&& rnum<=1) { //0~1인덱스를 메인탱이나 올라운더로
-					tmp=totalr.get(rnum);
-					totalr.set(rnum, totalr.get(i));
-					totalr.set(i, tmp);
-					rnum++;
+					
+						tmp=totalr.get(rnum);
+						totalr.set(rnum, totalr.get(i));
+						totalr.set(i, tmp);
+						rnum++;
+						
 				}//if end
 			}//for end
 			
@@ -396,10 +415,16 @@ public class MyFrame extends JFrame implements ActionListener{
 			for(int i=2 ; i <= total.getRowCount()-1 ; i++) {
 				if(total.getValueAt(i, 2).equals("서브탱") || total.getValueAt(i, 2).equals("올라운더")
 						&& rnum<=3 && rnum>1) {
-					tmp=totalr.get(rnum);
-					totalr.set(rnum, totalr.get(i));
-					totalr.set(i, tmp);
-					rnum++;			
+					try {
+						tmp=totalr.get(rnum);
+						totalr.set(rnum, totalr.get(i));
+						totalr.set(i, tmp);
+						rnum++;
+						
+					} catch (IndexOutOfBoundsException e) {
+						System.out.println(e);
+					}
+							
 					if(rnum>=12) {
 						JOptionPane.showMessageDialog(this, "최소 두명 이상의 올라운더나 메인탱커가 있어야합니다!"
 								,"ERROR",JOptionPane.ERROR_MESSAGE);
@@ -412,10 +437,12 @@ public class MyFrame extends JFrame implements ActionListener{
 		while(rnum<=7) {//딜러 포지션 4명이 채워질 때 까지
 			for(int i=4 ; i <= total.getRowCount()-1 ; i++) {
 				if(total.getValueAt(i, 3).equals("올라운더") && rnum<=5) { //4~5인덱스를 올라운더로 우선선발
-					tmp=totalr.get(rnum);
-					totalr.set(rnum, totalr.get(i));
-					totalr.set(i, tmp);
-					rnum++;
+					
+						tmp=totalr.get(rnum);
+						totalr.set(rnum, totalr.get(i));
+						totalr.set(i, tmp);
+						rnum++;
+						
 				}//if end
 			}//for end
 			
@@ -423,10 +450,12 @@ public class MyFrame extends JFrame implements ActionListener{
 				if(total.getValueAt(i, 3).equals("히트스캔") || total.getValueAt(i, 3).equals("투사체")
 						|| total.getValueAt(i, 3).equals("올라운더")
 						&& rnum<=7 && rnum>5) {//나머지 분배
-					tmp=totalr.get(rnum);
-					totalr.set(rnum, totalr.get(i));
-					totalr.set(i, tmp);
-					rnum++;	
+					
+						tmp=totalr.get(rnum);
+						totalr.set(rnum, totalr.get(i));
+						totalr.set(i, tmp);
+						rnum++;
+						
 					if(rnum>=12) {
 						JOptionPane.showMessageDialog(this, "최소 네명 이상의 딜러가 있어야합니다!"
 								,"ERROR",JOptionPane.ERROR_MESSAGE);
@@ -437,23 +466,31 @@ public class MyFrame extends JFrame implements ActionListener{
 		
 		
 		//힐러 분배(점수 내림차순)
-		while(rnum<=11) {//힐러 포지션 4명이 채워질 때 까지
+		while(rnum<=10) {//힐러 포지션 4명이 채워질 때 까지
 			for(int i=8 ; i <= total.getRowCount()-1 ; i++) {
 				if(total.getValueAt(i, 4).equals("메인힐") || total.getValueAt(i, 4).equals("올라운더")
 						&& rnum<=9) { //8~9인덱스를 메인힐이나 올라운더로
-					tmp=totalr.get(rnum);
-					totalr.set(rnum, totalr.get(i));
-					totalr.set(i, tmp);
-					rnum++;
+					try {
+						tmp=totalr.get(rnum);
+						totalr.set(rnum, totalr.get(i));
+						totalr.set(i, tmp);
+						rnum++;
+						
+					} catch (IndexOutOfBoundsException e) {
+						System.out.println(e);
+					}
+						
 				}//if end
 			}//for end 
 			for(int i=10 ; i <= total.getRowCount()-1 ; i++) {
 				if(total.getValueAt(i, 4).equals("서브힐") || total.getValueAt(i, 4).equals("올라운더")
 						&& rnum<=11 && rnum>9) {//나머지를 서브힐이나 올라운더로
-					tmp=totalr.get(rnum);
-					totalr.set(rnum, totalr.get(i));
-					totalr.set(i, tmp);
-					rnum++;
+					
+						tmp=totalr.get(rnum);
+						totalr.set(rnum, totalr.get(i));
+						totalr.set(i, tmp);
+						rnum++;
+						
 				}//if end
 			}//for end
 		}//while end
