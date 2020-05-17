@@ -197,7 +197,13 @@ public class MyFrame extends JFrame implements ActionListener{
 		
 		//화면에 보이게 하기
 		setVisible(true);
-		
+		JOptionPane.showMessageDialog(this, "OW_TeamSelector 사용법 (만든이.짱닭)\n\n"
+				+ "1. 추가 버튼으로 경기에 참여하는 선수의 정보(닉네임, 점수, 포지션)를 최소 12명 이상 추가합니다.\n"
+				+ "2. 선수정보에는 탱커, 딜러, 힐러 셋중의 하나의 포지션만을 입력해야합니다.\n"
+				+ "3. 최소한 한 포지션에 메인 또는 올라운더가 두 명이상 존재해야합니다.\n"
+				+ "4. 선수 입력이 끝나면 정렬 버튼을 누릅니다.\n"
+				+ "5. 행을 드래그하거나 클릭하여 선택한 후, 삭제버튼을 누르면 행이 삭제됩니다.\n"
+				+ "6. 선수 정보에 필요한 정보가 하나라도 빠지면 정렬 기능이 작동하지 않습니다.");
 	}//initUI end
 	
 	
@@ -234,7 +240,8 @@ public class MyFrame extends JFrame implements ActionListener{
 			
 			if(selectedRow == -1 && selectedRow2 == -1
 					&& selectedRow3 == -1) {// 선택한 셀이 없을 때
-				JOptionPane.showMessageDialog(this, "삭제할 셀을 선택해주세요!");
+				JOptionPane.showMessageDialog(this, "삭제할 셀을 선택해주세요!"
+						,"ERROR",JOptionPane.ERROR_MESSAGE);
 				return;
 			}else if(selectedRow != -1){
 				model.removeRow(table.getSelectedRow()); //선택한 셀 모델에서 삭제
@@ -272,8 +279,14 @@ public class MyFrame extends JFrame implements ActionListener{
 	
 	//모든 인원을 점수 내림차순으로 정렬하는 메소드
 	public DefaultTableModel pointDesc() {
-		DefaultTableModel total=new DefaultTableModel(header,0); //모든인원의 정보를 담을 객체
+		//선수의 숫자가 12명 이하면 에러메세지 출력
+		if(model.getRowCount()<6 || model2.getRowCount()<6) {
+			JOptionPane.showMessageDialog(this, "최소한 12명의 선수 정보를 입력해주세요!",
+					"ERROR",JOptionPane.ERROR_MESSAGE);
+		}
 		
+		DefaultTableModel total=new DefaultTableModel(header,0); //모든인원의 정보를 담을 객체
+				
 		//모든 입력된 row를 total에 담는다
 		for(int i=0 ; i < model.getRowCount() ; i++) {
 			total.addRow((Vector)model.getDataVector().get(i));			
@@ -312,6 +325,12 @@ public class MyFrame extends JFrame implements ActionListener{
 	
 	//모든 인원을 점수 오름차순으로 정렬하는 메소드
 	public DefaultTableModel pointAsc() {
+		//선수의 숫자가 12명 이하면 에러메세지 출력
+		if(model.getRowCount()<6 || model2.getRowCount()<6) {
+			JOptionPane.showMessageDialog(this, "최소한 12명의 선수 정보를 입력해주세요!",
+					"ERROR",JOptionPane.ERROR_MESSAGE);
+		}
+				
 		DefaultTableModel total=new DefaultTableModel(header,0); //모든인원의 정보를 담을 객체
 		
 		//모든 입력된 row를 total에 담는다
@@ -379,7 +398,8 @@ public class MyFrame extends JFrame implements ActionListener{
 					totalr.set(i, tmp);
 					rnum++;			
 					if(rnum>=12) {
-						JOptionPane.showMessageDialog(this, "최소 두명 이상의 올라운더나 메인탱커가 있어야합니다!");
+						JOptionPane.showMessageDialog(this, "최소 두명 이상의 올라운더나 메인탱커가 있어야합니다!"
+								,"ERROR",JOptionPane.ERROR_MESSAGE);
 					}
 				}//if end
 			}//for end
@@ -405,7 +425,8 @@ public class MyFrame extends JFrame implements ActionListener{
 					totalr.set(i, tmp);
 					rnum++;	
 					if(rnum>=12) {
-						JOptionPane.showMessageDialog(this, "최소 네명 이상의 딜러가 있어야합니다!");
+						JOptionPane.showMessageDialog(this, "최소 네명 이상의 딜러가 있어야합니다!"
+								,"ERROR",JOptionPane.ERROR_MESSAGE);
 					}
 				}//if end
 			}//for end
@@ -437,20 +458,7 @@ public class MyFrame extends JFrame implements ActionListener{
 		return total;
 		
 	}//posSelect end
-	
-	//탱커포지션 선수 숫자를 리턴하는 메소드
-	public int getTankCount(DefaultTableModel total) {
-		int tankCount=0;
 		
-		for(int i=0 ; i < total.getRowCount() ; i++) {
-			if(!total.getValueAt(i, 2).equals("")) {
-				tankCount++;
-			}
-		}
-		
-		return tankCount;
-	}
-	
 	//팀별로 분배하는 메소드
 	public void teamSelect(DefaultTableModel total) {
 		//모델 모두 초기화
