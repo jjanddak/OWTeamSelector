@@ -48,12 +48,12 @@ public class MyFrame extends JFrame implements ActionListener{
 		
 		//표 만들기
 		String contents[][]= {
-				{"루시우","3100","메인탱","",""},
+				{"루시우","3100","","투사체",""},
 				{"루시우3","2200","","","메인힐"},
 				{"희님","3900","","","서브힐"},
-				{"루시우2","2500","","서브딜",""},
-				{"짱닭","3500","서브탱","",""},
-				{"야돈","4000","","메인딜",""},
+				{"루시우2","2500","올라운더","",""},
+				{"짱닭","3500","","히트스캔",""},
+				{"야돈","4000","서브탱","",""},
 		};
 		String tank[]= {"","메인탱","서브탱","올라운더"};
 		String dps[]= {"","히트스캔","투사체","올라운더"};
@@ -259,10 +259,14 @@ public class MyFrame extends JFrame implements ActionListener{
 
 		}
 		else if(command.equals("pos")) { //포지션 정렬
-			//메인,서브 최대한 양팀에 분배되도록. 없다면 올라운더로 배치
+			//내림차순으로 정렬
+			DefaultTableModel total=pointDesc();
 			
+			//포지션 별로 재정렬 (탱딜힐 순서)
+			total=posSelect(total);
 			
-			
+			//양팀에 분배
+			teamSelect(total);
 		}//if(command.equals) end
 	}//actionPerformed end
 	
@@ -346,6 +350,107 @@ public class MyFrame extends JFrame implements ActionListener{
 		
 	}//pointAsc end
 	
+	
+	//포지션 별 분배하는 메소드
+	public DefaultTableModel posSelect(DefaultTableModel total) {
+		Object tmp;
+		int rnum=0;
+		Vector totalr=total.getDataVector();
+		
+		//탱커 분배(점수 내림차순)
+		while(rnum<=3) {//탱커 포지션 4명이 채워질 때 까지
+			//0~1인덱스는 메인탱이나 올라운더
+			for(int i=0 ; i <= total.getRowCount()-1 ; i++) {
+				if(total.getValueAt(i, 2).equals("메인탱") || total.getValueAt(i, 2).equals("올라운더")
+						&& rnum<=1) { //0~1인덱스를 메인탱이나 올라운더로
+					tmp=totalr.get(rnum);
+					totalr.set(rnum, totalr.get(i));
+					totalr.set(i, tmp);
+					rnum++;
+				}//if end
+			}//for end
+			
+			//나머지를 섭탱이나 올라운더로
+			for(int i=2 ; i <= total.getRowCount()-1 ; i++) {
+				if(total.getValueAt(i, 2).equals("서브탱") || total.getValueAt(i, 2).equals("올라운더")
+						&& rnum<=3 && rnum>1) {
+					tmp=totalr.get(rnum);
+					totalr.set(rnum, totalr.get(i));
+					totalr.set(i, tmp);
+					rnum++;			
+					if(rnum>=12) {
+						JOptionPane.showMessageDialog(this, "최소 두명 이상의 올라운더나 메인탱커가 있어야합니다!");
+					}
+				}//if end
+			}//for end
+		}//while end
+		
+		//딜러 분배(점수 내림차순)
+		while(rnum<=7) {//딜러 포지션 4명이 채워질 때 까지
+			for(int i=4 ; i <= total.getRowCount()-1 ; i++) {
+				if(total.getValueAt(i, 3).equals("올라운더") && rnum<=5) { //4~5인덱스를 올라운더로 우선선발
+					tmp=totalr.get(rnum);
+					totalr.set(rnum, totalr.get(i));
+					totalr.set(i, tmp);
+					rnum++;
+				}//if end
+			}//for end
+			
+			for(int i=4 ; i <= total.getRowCount()-1 ; i++) {
+				if(total.getValueAt(i, 3).equals("히트스캔") || total.getValueAt(i, 3).equals("투사체")
+						|| total.getValueAt(i, 3).equals("올라운더")
+						&& rnum<=7 && rnum>5) {//나머지 분배
+					tmp=totalr.get(rnum);
+					totalr.set(rnum, totalr.get(i));
+					totalr.set(i, tmp);
+					rnum++;	
+					if(rnum>=12) {
+						JOptionPane.showMessageDialog(this, "최소 네명 이상의 딜러가 있어야합니다!");
+					}
+				}//if end
+			}//for end
+		}//while end
+		
+		
+		//힐러 분배(점수 내림차순)
+		while(rnum<=11) {//힐러 포지션 4명이 채워질 때 까지
+			for(int i=8 ; i <= total.getRowCount()-1 ; i++) {
+				if(total.getValueAt(i, 4).equals("메인힐") || total.getValueAt(i, 4).equals("올라운더")
+						&& rnum<=9) { //8~9인덱스를 메인힐이나 올라운더로
+					tmp=totalr.get(rnum);
+					totalr.set(rnum, totalr.get(i));
+					totalr.set(i, tmp);
+					rnum++;
+				}//if end
+			}//for end 
+			for(int i=10 ; i <= total.getRowCount()-1 ; i++) {
+				if(total.getValueAt(i, 4).equals("서브힐") || total.getValueAt(i, 4).equals("올라운더")
+						&& rnum<=11 && rnum>9) {//나머지를 서브힐이나 올라운더로
+					tmp=totalr.get(rnum);
+					totalr.set(rnum, totalr.get(i));
+					totalr.set(i, tmp);
+					rnum++;
+				}//if end
+			}//for end
+		}//while end
+		
+		return total;
+		
+	}//posSelect end
+	
+	//탱커포지션 선수 숫자를 리턴하는 메소드
+	public int getTankCount(DefaultTableModel total) {
+		int tankCount=0;
+		
+		for(int i=0 ; i < total.getRowCount() ; i++) {
+			if(!total.getValueAt(i, 2).equals("")) {
+				tankCount++;
+			}
+		}
+		
+		return tankCount;
+	}
+	
 	//팀별로 분배하는 메소드
 	public void teamSelect(DefaultTableModel total) {
 		//모델 모두 초기화
@@ -353,7 +458,7 @@ public class MyFrame extends JFrame implements ActionListener{
 		model2.setNumRows(0);
 		model3.setNumRows(0);
 		
-		//total을 팀1,2 관전자에 분배
+		//total을 팀1, 2, 관전자에 분배
 		for(int i=0; i <= total.getRowCount()-1 ; i++) {
 			//현재 로우
 			Object rowdata=total.getDataVector().get(i);
@@ -362,7 +467,7 @@ public class MyFrame extends JFrame implements ActionListener{
 				model2.addRow((Vector)rowdata);
 			}else if(i>11){//12명 이상일때 관전자에 추가
 				model3.addRow((Vector)rowdata);
-			}else {//짝수 줄은 팀1에 추가
+			}else {//0번인덱스와 짝수 줄은 팀1에 추가
 				model.addRow((Vector)rowdata);
 			}//if end
 		}//for end
