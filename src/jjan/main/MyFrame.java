@@ -47,22 +47,25 @@ public class MyFrame extends JFrame implements ActionListener{
 		setLocationRelativeTo(null);
 		
 		//표 만들기
-		String contents[][]= {
-				{"루시우","3100","","투사체",""},
-				{"루시우3","2200","","","메인힐"},
-				{"희님","3900","","","서브힐"},
-				{"루시우2","2500","올라운더","",""},
-				{"짱닭","3500","","히트스캔",""},
-				{"야돈","4000","서브탱","",""},
-		};
+		//샘플데이터
+//		String contents[][]= {
+//				{"루시우","3100","","투사체",""},
+//				{"루시우3","2200","","","메인힐"},
+//				{"희님","3900","","","서브힐"},
+//				{"루시우2","2500","올라운더","",""},
+//				{"짱닭","3500","","히트스캔",""},
+//				{"야돈","4000","서브탱","",""},
+//		};
 		String tank[]= {"","메인탱","서브탱","올라운더"};
 		String dps[]= {"","히트스캔","투사체","올라운더"};
 		String heal[]= {"","메인힐","서브힐","올라운더"};		
-		
+
+		//샘플데이터 추가
+//		model=new DefaultTableModel(contents,header);
+//		model2=new DefaultTableModel(contents,header);
 		//기본모델, 테이블 생성 
-		model=new DefaultTableModel(contents,header);
-//		model2=new DefaultTableModel(header,0);
-		model2=new DefaultTableModel(contents,header);
+		model=new DefaultTableModel(header,0);
+		model2=new DefaultTableModel(header,0);
 		model3=new DefaultTableModel(header,0);
 		
 		table=new JTable(model);
