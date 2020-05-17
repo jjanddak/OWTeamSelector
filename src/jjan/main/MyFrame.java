@@ -77,10 +77,10 @@ public class MyFrame extends JFrame implements ActionListener{
 		//테이블 크기 조정
 		//MaximumSize와 PrefferredSize 둘다 사용해야 테이블의 가로세로 크기가 제대로 조정된다.(?)
 		scpane.setMaximumSize(new Dimension(400,0));
-		scpane.setPreferredSize(new Dimension(400,119));
+		scpane.setPreferredSize(new Dimension(400,121));
 		JScrollPane scpane2=new JScrollPane(table2);
 		scpane2.setMaximumSize(new Dimension(400,0));
-		scpane2.setPreferredSize(new Dimension(400,119));
+		scpane2.setPreferredSize(new Dimension(400,121));
 		JScrollPane scpane3=new JScrollPane(table3);
 		
 		//표 배경이 흰색으로 표시되도록
